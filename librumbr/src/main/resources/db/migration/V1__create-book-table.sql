@@ -1,0 +1,4 @@
+CREATE TABLE  TESTE_MIG (
+    id SERIAL PRIMARY KEY,
+    test VARCHAR
+);
