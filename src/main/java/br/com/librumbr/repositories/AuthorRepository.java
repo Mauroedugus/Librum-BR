@@ -8,4 +8,5 @@ import br.com.librumbr.models.Author;
 @Repository
 public interface AuthorRepository extends JpaRepository<Author, Integer> {
 
+    Author findByName(String authorName);
 }
