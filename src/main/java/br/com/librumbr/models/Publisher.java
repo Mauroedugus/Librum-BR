@@ -18,4 +18,9 @@ public class Publisher {
     @NonNull
     @Column(nullable = false, length = 100)
     private String name;
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }
