@@ -5,8 +5,10 @@ import org.springframework.stereotype.Repository;
 
 import br.com.librumbr.models.Author;
 
+import java.util.Optional;
+
 @Repository
 public interface AuthorRepository extends JpaRepository<Author, Integer> {
 
-    Author findByName(String authorName);
+    Optional<Author> findByName(String authorName);
 }
