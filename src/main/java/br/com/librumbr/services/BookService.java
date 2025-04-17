@@ -120,7 +120,5 @@ public class BookService {
         oldBook.setAuthors(authors);
 
         Book savedBook = bookRepository.save(oldBook);
-
-        ModelMapperUtil.parseObject(savedBook, BookResponseDTO.class);
     }
 }
