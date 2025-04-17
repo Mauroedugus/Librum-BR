@@ -7,6 +7,7 @@ import br.com.librumbr.models.Book;
 
 import java.util.Optional;
 
+@Repository
 public interface BookRepository extends JpaRepository<Book, Integer> {
 
     Optional<Book> findByIsbn(String isbn);
