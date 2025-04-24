@@ -1,5 +1,6 @@
 package br.com.librumbr.services;
 
+import br.com.librumbr.exceptions.InvalidTokenException;
 import br.com.librumbr.models.User;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 
 @Service
 public class TokenService {
@@ -23,7 +25,8 @@ public class TokenService {
             return JWT.create()
                     .withIssuer("librumbr")
                     .withSubject(user.getEmail())
-                    .withExpiresAt(genExpirationDate())
+                    .withClaim("roles", List.of(user.getAuthorities()).toString())
+                    .withExpiresAt(this.genExpirationDate())
                     .sign(algorithm);
         } catch (JWTCreationException e){
             throw new RuntimeException("Error while generating token", e);
@@ -39,7 +42,7 @@ public class TokenService {
                   .verify(token)
                   .getSubject();
         } catch (JWTVerificationException e){
-            throw new RuntimeException("Error validating token");
+            throw new InvalidTokenException("Invalid or expired token");
         }
     }
 
