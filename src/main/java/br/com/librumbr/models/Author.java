@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -24,4 +25,21 @@ public class Author {
     @ManyToMany(mappedBy = "authors")
     private List<Book> books;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Author author = (Author) o;
+        return id == author.id && Objects.equals(name, author.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

@@ -4,7 +4,10 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -12,8 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Entity
 @Table(name = "books")
-public class Book {
-
+public class Book implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -42,7 +44,7 @@ public class Book {
         joinColumns = @JoinColumn(name = "book_id"),
         inverseJoinColumns = @JoinColumn(name = "author_id")
     )
-    private List<Author> authors;
+    private List<Author> authors = new ArrayList<>();
 
     @NonNull
     @ManyToOne
@@ -62,4 +64,16 @@ public class Book {
     @Column(nullable = false, columnDefinition = "INT")
     private int quantity;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Book book = (Book) o;
+        return id == book.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
 }
