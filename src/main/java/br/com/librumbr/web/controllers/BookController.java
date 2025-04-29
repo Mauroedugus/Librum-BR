@@ -6,6 +6,7 @@ import br.com.librumbr.services.BookService;
 import br.com.librumbr.web.dto.BookCreateDTO;
 import br.com.librumbr.web.dto.BookResponseDTO;
 import br.com.librumbr.web.dto.BrasilApiResponseDTO;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,7 +45,7 @@ public class BookController {
 
 
     @PostMapping
-    public ResponseEntity<BookResponseDTO> createBook(@RequestBody BookCreateDTO book) {
+    public ResponseEntity<BookResponseDTO> createBook(@RequestBody @Valid BookCreateDTO book) {
         var newBook = bookService.createBook(book);
         return ResponseEntity.status(HttpStatus.CREATED).body(ModelMapperUtil.parseObject(newBook, BookResponseDTO.class));
     }
@@ -56,7 +57,7 @@ public class BookController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateBook(@PathVariable int id, @RequestBody BookCreateDTO updatedBook) {
+    public ResponseEntity<Void> updateBook(@PathVariable int id, @RequestBody @Valid BookCreateDTO updatedBook) {
         bookService.updateBook(id, updatedBook);
         return ResponseEntity.noContent().build();
     }
