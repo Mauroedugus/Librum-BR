@@ -19,8 +19,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ProblemDetail> handleUserNotFound(UserNotFoundException e){
+        ProblemDetail error = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
+        error.setTitle("User not found");
+        error.setDetail(e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ProblemDetail> handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
+    public ResponseEntity<ProblemDetail> handleMethodArgumentNotValid(MethodArgumentNotValidException e){
         ProblemDetail error = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         error.setTitle("Invalid request arguments");
         error.setDetail("Campos com valores inválidos");
@@ -28,7 +36,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ProblemDetail> handleHttpMessageNotReadableException(HttpMessageNotReadableException e){
+    public ResponseEntity<ProblemDetail> handleHttpMessageNotReadable(HttpMessageNotReadableException e){
         ProblemDetail error = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         error.setTitle("Invalid JSON arguments");
         error.setDetail("JSON inválido");
@@ -36,7 +44,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<ProblemDetail> handleBadCredentialsException(BadCredentialsException e){
+    public ResponseEntity<ProblemDetail> handleBadCredentials(BadCredentialsException e){
         ProblemDetail error = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
         error.setTitle("Invalid credentials");
         error.setDetail("Login ou senha inválidos");
