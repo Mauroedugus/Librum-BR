@@ -1,5 +1,6 @@
 package br.com.librumbr.services;
 
+import br.com.librumbr.exceptions.BookNotFoundException;
 import br.com.librumbr.models.Author;
 import br.com.librumbr.models.Book;
 import br.com.librumbr.models.Category;
@@ -15,11 +16,13 @@ import br.com.librumbr.web.dto.BrasilApiResponseDTO;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,7 +50,20 @@ public class BookService {
         return webClient.get()
                 .uri("/{isbn}", isbn)
                 .retrieve()
-                .bodyToMono(BrasilApiResponseDTO.class);
+                .onStatus(HttpStatusCode::is4xxClientError, response -> {
+                    // Se for erro 404, ignora e tenta buscar local
+                    return Mono.error(new BookNotFoundException("Livro não encontrado na API externa."));
+                })
+                .bodyToMono(BrasilApiResponseDTO.class)
+                .onErrorResume(ex -> {
+                    // Busca no banco se falhar a chamada
+                    Optional<Book> bookOptional = bookRepository.findByIsbn(isbn);
+                    if (bookOptional.isEmpty()){
+                        return Mono.error(new BookNotFoundException("Livro não encontrado no banco de dados"));
+                    }
+                    BrasilApiResponseDTO dto = ModelMapperUtil.parseObject(bookOptional.get(), BrasilApiResponseDTO.class);
+                    return Mono.just(dto);
+                });
     }
 
     @Transactional
@@ -60,7 +76,7 @@ public class BookService {
 
     @Transactional
     public BookResponseDTO findBookById(int id) {
-        var book = bookRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        var book = bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException("Livro com ID " + id + " não encontrado"));
         return ModelMapperUtil.parseObject(book, BookResponseDTO.class);
     }
 
@@ -89,6 +105,9 @@ public class BookService {
 
     @Transactional
     public void deleteBook(int id) {
+        if (!bookRepository.existsById(id)) {
+            throw new BookNotFoundException("Livro com ID " + id + " não encontrado para exclusão.");
+        }
         bookRepository.deleteById(id);
     }
 
@@ -96,7 +115,7 @@ public class BookService {
     public void updateBook(int id, BookCreateDTO updatedBook) {
 
         Book oldBook = bookRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Book not found"));
+                .orElseThrow(() -> new BookNotFoundException("Livro não encontrado"));
 
         List<Author> authors = updatedBook.getAuthors().stream()
                 .map(authorName -> authorRepository.findByName(authorName)
