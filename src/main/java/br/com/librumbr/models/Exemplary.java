@@ -1,10 +1,7 @@
 package br.com.librumbr.models;
 
-import com.fasterxml.jackson.databind.annotation.EnumNaming;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.List;
 
 @Getter
 @Setter
@@ -16,7 +13,7 @@ public class Exemplary {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @NonNull
     @Column(name = "inventory_number", nullable = false, length = 255)
@@ -34,4 +31,5 @@ public class Exemplary {
     @NonNull
     @Column(nullable = false, length = 100)
     private String status;
+
 }

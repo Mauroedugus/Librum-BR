@@ -43,7 +43,6 @@ public class BookController {
         return ResponseEntity.ok(bookService.findBookById(id));
     }
 
-
     @PostMapping
     public ResponseEntity<BookResponseDTO> createBook(@RequestBody @Valid BookCreateDTO book) {
         var newBook = bookService.createBook(book);
