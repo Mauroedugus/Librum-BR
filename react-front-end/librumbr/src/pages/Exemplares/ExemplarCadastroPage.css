@@ -1,0 +1,89 @@
+.exemplar-cadastro-container {
+  padding: 24px;
+  min-height: 100vh;
+  background-color: var(--bg-color);
+  color: var(--label-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.exemplar-cadastro-container.light {
+  --bg-color: #fff;
+  --label-color: #000;
+  --card-bg: #f0f2f5;
+  --card-text-color: #000;
+  --border-color: #6c63ff;
+}
+
+.exemplar-cadastro-container.dark {
+  --bg-color: #1e1e2f;
+  --label-color: #fff;
+  --card-bg: #2d2b55;
+  --card-text-color: #fff;
+  --border-color: #6c63ff;
+}
+
+.exemplar-cadastro-title {
+  margin-bottom: 24px;
+  color: var(--label-color) !important;
+  transition: color 0.3s ease;
+}
+
+.exemplar-cadastro-container .ant-form-item-label > label {
+  color: var(--label-color) !important;
+  transition: color 0.3s ease;
+}
+
+.exemplar-cadastro-container input.ant-input,
+.exemplar-cadastro-container .ant-input-number,
+.exemplar-cadastro-container .ant-input-number-input {
+  background-color: var(--bg-color) !important;
+  color: var(--label-color) !important;
+  border-color: var(--border-color) !important;
+  border-radius: 4px;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.exemplar-cadastro-container input::placeholder {
+  color: var(--label-color);
+  opacity: 0.6;
+}
+
+.exemplar-cadastro-container input.ant-input:focus,
+.exemplar-cadastro-container .ant-input-number-focused,
+.exemplar-cadastro-container input.ant-input-focused {
+  border-color: #917cff !important;
+  box-shadow: 0 0 0 2px rgba(145, 124, 255, 0.2);
+}
+
+.exemplar-cadastro-card {
+  background-color: var(--card-bg) !important;
+  color: var(--card-text-color) !important;
+  margin-top: 16px;
+  border-radius: 6px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.exemplar-cadastro-card strong,
+.exemplar-cadastro-card .ant-typography-strong {
+  color: var(--card-text-color) !important;
+}
+
+.exemplar-cadastro-card,
+.exemplar-cadastro-card * {
+  color: var(--card-text-color) !important;
+}
+
+.exemplar-cadastro-container .ant-btn-primary {
+  background-color: #6c63ff; /* seu tom roxo */
+  border-color: #6c63ff;
+  color: #fff !important;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.exemplar-cadastro-container .ant-btn-primary:hover,
+.exemplar-cadastro-container .ant-btn-primary:focus {
+  background-color: #554bbe;
+  border-color: #554bbe;
+  color: #fff !important;
+}
