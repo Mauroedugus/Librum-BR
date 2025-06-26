@@ -1,0 +1,19 @@
+.tabela-dark .ant-table-thead > tr > th {
+  background-color: #2d2b55;
+  color: #fff;
+}
+
+.tabela-dark .ant-table-tbody > tr > td {
+  background-color: #1e1e2f;
+  color: #ffffff;
+}
+
+.tabela-light .ant-table-thead > tr > th {
+  background-color: #f0f2f5;
+  color: #000;
+}
+
+.tabela-light .ant-table-tbody > tr > td {
+  background-color: #fff;
+  color: #000;
+}

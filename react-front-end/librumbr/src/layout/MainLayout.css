@@ -1,0 +1,10 @@
+.menu-fixo .ant-menu-item-selected {
+  background-color: #3a3870 !important;
+  color: #6C63FF !important;
+  font-weight: bold;
+}
+
+.menu-fixo .ant-menu-item:hover {
+  background-color: #44427a !important;
+  color: #fff !important;
+}
