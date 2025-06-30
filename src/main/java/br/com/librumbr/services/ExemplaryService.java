@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,10 +37,11 @@ public class ExemplaryService {
 
         Exemplary exemplary = ModelMapperUtil.parseObject(dto, Exemplary.class);
 
+        String inventoryNumber = generateInventoryNumber(book.getId());
+
         exemplary.setId(null);
         exemplary.setBook(book);
-        //A função de gerar número de tombo será chamada neste momento, assim setando o valor
-        //Quando isso for feito, deverá retirar o campo do crateDTO
+        exemplary.setInventoryNumber(inventoryNumber);
 
         return ModelMapperUtil.parseObject(exemplaryRepository.save(exemplary), ExemplaryResponseDTO.class);
     }
@@ -49,7 +52,6 @@ public class ExemplaryService {
                 .orElseThrow(() -> new EntityNotFoundException("Exemplary not found"));
 
         oldExemplary.setStatus(updateExemplary.getStatus());
-        oldExemplary.setInventoryNumber(updateExemplary.getInventoryNumber());
 
         if (updateExemplary.getBookRentalId() != null) {
             var bookRental = bookRentalRepository.findById(Integer.parseInt(updateExemplary.getBookRentalId()))
@@ -74,6 +76,37 @@ public class ExemplaryService {
         var exemplarsDTO = exemplars.stream().map(p -> ModelMapperUtil.parseObject(p, ExemplaryResponseDTO.class));
 
         return exemplarsDTO.toList();
+    }
+
+    private String generateInventoryNumber(int bookId) {
+        int index = getNextTomboIndex(bookId);
+        LocalDate today = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy");
+        String date = today.format(formatter);
+
+        return "L" + bookId + "-D" + date + "-I" + index;
+    }
+
+    private int getNextTomboIndex(int bookId) {
+        List<Exemplary> exemplars = exemplaryRepository.findByBookId(bookId);
+
+        return exemplars.stream()
+                .map(Exemplary::getInventoryNumber)
+                .map(this::extractIndexFromTombo)
+                .max(Integer::compareTo)
+                .orElse(0) + 1;
+    }
+
+    private int extractIndexFromTombo(String inventoryNumber) {
+        try {
+            String[] parts = inventoryNumber.split("-I");
+            if (parts.length < 2) {
+                throw new IllegalArgumentException("Format invalid for inventory number: " + inventoryNumber);
+            }
+            return Integer.parseInt(parts[1]);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Format inventory number invalid: " + inventoryNumber, e);
+        }
     }
 
 

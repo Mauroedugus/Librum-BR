@@ -9,9 +9,6 @@ import java.io.Serializable;
 @Data
 public class ExemplaryCreateDTO implements Serializable {
 
-    @JsonProperty("inventory_number")
-    private String inventoryNumber;
-
     @JsonProperty("book_id")
     private String bookId;
 
