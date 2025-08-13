@@ -1,9 +1,8 @@
-package br.com.librumbr.controllers;
+package br.com.librumbr.web.controllers;
 
 import br.com.librumbr.models.Exemplary;
 import br.com.librumbr.models.mapper.ModelMapperUtil;
 import br.com.librumbr.services.ExemplaryService;
-import br.com.librumbr.web.dto.BookResponseDTO;
 import br.com.librumbr.web.dto.ExemplaryCreateDTO;
 import br.com.librumbr.web.dto.ExemplaryResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +38,7 @@ class ExemplaryController {
     }
 
     @GetMapping("/{id}")
-    public Exemplary getExemplary(@PathVariable int id) {
+    public ExemplaryResponseDTO getExemplary(@PathVariable int id) {
         return exemplaryService.findById(id);
     }
 

@@ -10,12 +10,12 @@ import java.io.Serializable;
 public class ExemplaryCreateDTO implements Serializable {
 
     @JsonProperty("book_id")
-    private String bookId;
+    private Integer bookId;
 
     @JsonProperty("status")
     private String status;
 
     @JsonProperty("book_rental")
-    private String bookRentalId;
+    private Integer bookRentalId;
 
 }

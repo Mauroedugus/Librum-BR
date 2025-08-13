@@ -11,11 +11,11 @@ public class ExemplaryResponseDTO {
     @JsonProperty("inventory_number")
     private String inventoryNumber;
 
-    @JsonProperty("bookTitle")
+    @JsonProperty("book_Title")
     private String bookTitle;
 
-    @JsonProperty("book_rental")
-    private Integer bookRental;
+    @JsonProperty("book_rental_id")
+    private Integer bookRentalId;
 
     @JsonProperty("status")
     private String status;
