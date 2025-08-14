@@ -13,13 +13,13 @@ import java.io.IOException;
 
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
         ProblemDetail error = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
-            error.setTitle("Invalid token");
-            error.setDetail("Invalid or expired token");
+        error.setTitle("Unauthorized");
+        error.setDetail(authException.getMessage()); // Usa a real mensagem
 
-            response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            response.setContentType("application/json");
-            response.getWriter().write(new ObjectMapper().writeValueAsString(error));
-        }
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setContentType("application/json");
+        response.getWriter().write(new ObjectMapper().writeValueAsString(error));
+    }
 }

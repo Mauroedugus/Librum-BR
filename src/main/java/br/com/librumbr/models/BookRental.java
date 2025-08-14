@@ -3,8 +3,8 @@ package br.com.librumbr.models;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Date;
 import java.util.List;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -16,7 +16,7 @@ public class BookRental {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @NonNull
     @OneToMany(mappedBy = "bookRental")
@@ -29,14 +29,14 @@ public class BookRental {
 
     @NonNull
     @Column(name = "start_date", nullable = false)
-    private Date startDate;
+    private LocalDate startDate;
 
     @NonNull
     @Column(name = "predicted_date", nullable = false)
-    private Date predictedDate;
+    private LocalDate predictedDate;
 
     @Column(name = "final_date")
-    private Date finalDate;
+    private LocalDate finalDate;
 
     @NonNull
     @Column(nullable = false, length = 100)

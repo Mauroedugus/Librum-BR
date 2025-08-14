@@ -34,15 +34,20 @@ public class SecurityFilter extends OncePerRequestFilter {
                 filterChain.doFilter(request, response);
                 return;
             }
-
+        try {
             var token = this.recoverToken(request);
-            if(token!=null){
+            if (token != null) {
                 var login = tokenService.validateToken(token);
                 UserDetails user = userRepo.findByEmail(login);
                 var auth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
-            filterChain.doFilter(request,response);
+            filterChain.doFilter(request, response);
+        }catch (Exception ex) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\": \"" + ex.getMessage() + "\"}");
+        }
     }
 
     private String recoverToken(HttpServletRequest request){

@@ -32,16 +32,15 @@ public class ExemplaryService {
 
     @Transactional
     public ExemplaryResponseDTO createExemplary(ExemplaryCreateDTO dto) {
-        Book book = bookRepository.findById(Integer.parseInt(dto.getBookId()))
+        Book book = bookRepository.findById(dto.getBookId())
             .orElseThrow(() -> new EntityNotFoundException("Book not found"));
 
-        Exemplary exemplary = ModelMapperUtil.parseObject(dto, Exemplary.class);
-
-        String inventoryNumber = generateInventoryNumber(book.getId());
+        Exemplary exemplary = new Exemplary();
 
         exemplary.setId(null);
         exemplary.setBook(book);
-        exemplary.setInventoryNumber(inventoryNumber);
+        exemplary.setInventoryNumber(generateInventoryNumber(book.getId()));
+        exemplary.setStatus("available");
 
         return ModelMapperUtil.parseObject(exemplaryRepository.save(exemplary), ExemplaryResponseDTO.class);
     }
@@ -54,7 +53,7 @@ public class ExemplaryService {
         oldExemplary.setStatus(updateExemplary.getStatus());
 
         if (updateExemplary.getBookRentalId() != null) {
-            var bookRental = bookRentalRepository.findById(Integer.parseInt(updateExemplary.getBookRentalId()))
+            var bookRental = bookRentalRepository.findById(updateExemplary.getBookRentalId())
                     .orElseThrow(() -> new EntityNotFoundException("BookRental not found"));
             oldExemplary.setBookRental(bookRental);
         } else {
@@ -66,9 +65,11 @@ public class ExemplaryService {
 
     public void deleteById(int id) {exemplaryRepository.deleteById(id);}
     
-    public Exemplary findById(int id) {
-        return exemplaryRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Exemplary not found with id: " + id));
+    public ExemplaryResponseDTO findById(int id) {
+        var exemplary = exemplaryRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Exemplary not found with id: " + id));;
+        return ModelMapperUtil.parseObject(exemplary, ExemplaryResponseDTO.class);
+
     }
 
     public List<ExemplaryResponseDTO> findAllExemplars() {
@@ -79,7 +80,7 @@ public class ExemplaryService {
     }
 
     private String generateInventoryNumber(int bookId) {
-        int index = getNextTomboIndex(bookId);
+        int index = getNextInventoryNumberIndex(bookId);
         LocalDate today = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy");
         String date = today.format(formatter);
@@ -87,17 +88,17 @@ public class ExemplaryService {
         return "L" + bookId + "-D" + date + "-I" + index;
     }
 
-    private int getNextTomboIndex(int bookId) {
+    private int getNextInventoryNumberIndex(int bookId) {
         List<Exemplary> exemplars = exemplaryRepository.findByBookId(bookId);
 
         return exemplars.stream()
                 .map(Exemplary::getInventoryNumber)
-                .map(this::extractIndexFromTombo)
+                .map(this::extractIndexFromInventoryNumber)
                 .max(Integer::compareTo)
                 .orElse(0) + 1;
     }
 
-    private int extractIndexFromTombo(String inventoryNumber) {
+    private int extractIndexFromInventoryNumber(String inventoryNumber) {
         try {
             String[] parts = inventoryNumber.split("-I");
             if (parts.length < 2) {
