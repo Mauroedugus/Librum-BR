@@ -25,7 +25,7 @@ const LoginPage = () => {
   };
 
   const esqueceuSenha = () => {
-    messageApi.info('Função de recuperação de senha ainda não implementada');
+    navigate('/forgot-password');
   };
 
   return (

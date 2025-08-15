@@ -7,6 +7,8 @@ import ExemplarCadastroPage from './pages/Exemplares/ExemplarCadastroPage';
 import LeitoresPage from './pages/Leitores/LeitoresPage';
 import MainLayout from './layout/MainLayout';
 import InicioPage from './pages/Inicio/InicioPage';
+import RedefinirSenhaPage from './pages/RecuperacaoSenha/RedefinirSenhaPage';
+import SolicitarRedefinicaoPage from './pages/RecuperacaoSenha/SolicitarRedefinicaoPage';
 
 const App = () => (
   <BrowserRouter>
@@ -14,6 +16,8 @@ const App = () => (
       <Route path="/" element={<InicioPage  />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/cadastrar" element={<UsuarioCadastroPage />} />
+      <Route path="/forgot-password" element={<SolicitarRedefinicaoPage />} />
+      <Route path="/reset-password" element={<RedefinirSenhaPage />} />
       <Route path="/" element={<MainLayout />}>
         <Route path="dashboard" element={<DashboardPage />} />
         <Route path="livros/cadastrar" element={<LivroCadastroPage />} />
