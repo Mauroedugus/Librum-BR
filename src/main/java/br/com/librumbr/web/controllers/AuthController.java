@@ -2,17 +2,15 @@ package br.com.librumbr.web.controllers;
 
 import br.com.librumbr.models.User;
 import br.com.librumbr.repositories.UserRepository;
+import br.com.librumbr.services.AuthService;
 import br.com.librumbr.services.TokenService;
-import br.com.librumbr.web.dto.AuthDTO;
-import br.com.librumbr.web.dto.LoginResponseDTO;
-import br.com.librumbr.web.dto.RegisterDTO;
+import br.com.librumbr.web.dto.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,6 +29,9 @@ public class AuthController {
     @Autowired
     private TokenService tokenService;
 
+    @Autowired
+    private AuthService authService;
+
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid AuthDTO data){
         try {
@@ -45,12 +46,24 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<LoginResponseDTO> register(@RequestBody @Valid RegisterDTO data){
-        if (repo.findByEmail(data.login()) != null) return ResponseEntity.badRequest().build();
+        if (repo.findUserDetailsByEmail(data.login()) != null) return ResponseEntity.badRequest().build();
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
         User newUser = new User(data.name(), data.login(), encryptedPassword, data.role());
         repo.save(newUser);
 
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<Void> forgotPassword(@RequestBody @Valid ForgotPasswordDTO dto){
+        authService.forgotPassword(dto.email());
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<Void> resetPassword(@RequestBody @Valid ResetPasswordDTO dto){
+        authService.resetPassword(dto.token(), dto.newPassword());
         return ResponseEntity.ok().build();
     }
 }

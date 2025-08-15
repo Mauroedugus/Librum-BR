@@ -50,4 +50,5 @@ public class GlobalExceptionHandler {
         error.setDetail("Login ou senha inválidos");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
+
 }

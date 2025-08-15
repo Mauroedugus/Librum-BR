@@ -1,6 +1,7 @@
 package br.com.librumbr.services;
 
 import br.com.librumbr.exceptions.UserNotFoundException;
+import br.com.librumbr.models.User;
 import br.com.librumbr.models.mapper.ModelMapperUtil;
 import br.com.librumbr.repositories.UserRepository;
 import br.com.librumbr.web.dto.UserDTO;
@@ -21,7 +22,11 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return repo.findByEmail(username);
+        return repo.findUserDetailsByEmail(username);
+    }
+
+    public User findUserByEmail(String email) throws UsernameNotFoundException {
+        return repo.findUserByEmail(email);
     }
 
     @Transactional

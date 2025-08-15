@@ -1,8 +1,8 @@
 package br.com.librumbr.security;
 
-import br.com.librumbr.exceptions.InvalidTokenException;
 import br.com.librumbr.repositories.UserRepository;
 import br.com.librumbr.services.TokenService;
+import br.com.librumbr.services.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,10 +12,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Map;
 
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
@@ -24,21 +24,27 @@ public class SecurityFilter extends OncePerRequestFilter {
     TokenService tokenService;
 
     @Autowired
-    UserRepository userRepo;
+    UserService userService;
+
+    private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-            String path = request.getRequestURI();
-            // Ignora rotas públicas
-            if (path.startsWith("/auth/login") || path.startsWith("/auth/register")) {
+        String path = request.getRequestURI();
+        // Ignora rotas públicas
+        String[] publicRoutes = {"/auth/login", "/auth/register", "/auth/forgot-password", "/auth/reset-password"};
+
+        for (String route : publicRoutes){
+            if (pathMatcher.match(route, path)) {
                 filterChain.doFilter(request, response);
                 return;
             }
+        }
         try {
             var token = this.recoverToken(request);
             if (token != null) {
                 var login = tokenService.validateToken(token);
-                UserDetails user = userRepo.findByEmail(login);
+                UserDetails user = userService.loadUserByUsername(login);
                 var auth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
